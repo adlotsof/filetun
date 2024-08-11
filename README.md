@@ -1,4 +1,4 @@
-# fileProxy
+# fileTun
 
 After reading https://xeiaso.net/blog/anything-message-queue/ this entertaining post, i wanted to implement approximatly what they did in their setup.
 

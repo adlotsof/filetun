@@ -153,7 +153,7 @@ func Run() {
 
 	}()
 
-	iface, err := setupDevice(conf.OwnName, conf.OwnCidr, conf.PeersSubnets)
+	iface, err := setupDevice(conf.OwnName, conf.OwnCidr, conf.PeersCidr)
 	if err != nil {
 		log.Fatalf("coundt setup device, %v", err)
 	}

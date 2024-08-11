@@ -24,7 +24,7 @@ func TestSetupDevice(t *testing.T) {
 		t.Fatalf("probably you are not root while you should be %s err %v", usr, err)
 	}
 	config.CLI.OwnCidr = "10.0.22.0/24"
-	config.CLI.PeersSubnets = "10.0.21.0/24"
+	config.CLI.PeersCidr = "10.0.21.0/24"
 	config.CLI.OwnName = "testTunDevice"
 	config.CLI.Input = "testInput.gob"
 	config.CLI.Output = "testOutput.gob"
@@ -35,7 +35,7 @@ func TestSetupDevice(t *testing.T) {
 	}()
 	os.Create(config.CLI.Input)
 	os.Create(config.CLI.Output)
-	iface, err := setupDevice(config.CLI.OwnName, config.CLI.OwnCidr, config.CLI.PeersSubnets)
+	iface, err := setupDevice(config.CLI.OwnName, config.CLI.OwnCidr, config.CLI.PeersCidr)
 	if err != nil {
 		t.Errorf("Error setting up device %v", err)
 	}
@@ -54,7 +54,7 @@ func TestSetupDevice(t *testing.T) {
 
 func TestForwardPacketsToIface(t *testing.T) {
 	config.CLI.OwnCidr = "10.0.23.0/24"
-	config.CLI.PeersSubnets = "10.0.24.0/24"
+	config.CLI.PeersCidr = "10.0.24.0/24"
 	config.CLI.OwnName = "testTunDevice"
 	config.CLI.Input = "testInput.gob"
 	config.CLI.Output = "testOutput.gob"
@@ -89,7 +89,7 @@ func TestForwardPacketsToIface(t *testing.T) {
 
 func TestForwardPacketsToFile(t *testing.T) {
 	config.CLI.OwnCidr = "10.0.23.0/24"
-	config.CLI.PeersSubnets = "10.0.24.0/24"
+	config.CLI.PeersCidr = "10.0.24.0/24"
 	config.CLI.OwnName = "testTunDevice"
 	config.CLI.Input = "testInput.gob"
 	config.CLI.Output = "testOutput.gob"

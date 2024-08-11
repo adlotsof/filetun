@@ -22,12 +22,12 @@ You can use e.g. sshfs or ntfs or probably s3 or a gcp bucket
 
 On the left machine:
 ```bash
-sudo ./main --own_cidr 10.0.9.0/24 --own_name left --input ./testing/input.gob --output ./testing/output.gob --peer_subnet='10.0.8.0/24'
+sudo ./main --own_cidr 10.0.9.0/24 --own_name left --input ./testing/input.gob --output ./testing/output.gob --peer_cidr='10.0.8.0/24'
 ```
 
 On the right machine:
 ```bash
-sudo ./main --own_cidr 10.0.8.0/24 --own_name right --input ./testing/input.gob --output ./testing/output.gob --peer_subnet='10.0.9.0/24'
+sudo ./main --own_cidr 10.0.8.0/24 --own_name right --input ./testing/input.gob --output ./testing/output.gob --peer_cidr='10.0.9.0/24'
 ```
 
 On both machines you should have a tun device, named `left` or `right` depending on the machine.

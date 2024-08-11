@@ -66,3 +66,4 @@ You should also be abled to ping or ssh anything on the remote subnet
 - - - [] add slack or whatsapp or facebook or something like that, instagram chat, tiktok comments
 - [] add more settings, config yaml and env vars
 - [] figure out how to do things as non-root
+- [] use context

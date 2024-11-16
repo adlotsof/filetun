@@ -1,5 +1,6 @@
 package types
 
+
 // Backend is the interface that wraps the basic methods for the backend.
 type Backend interface {
 	// SendToBackend sends the data from the tun interface to the backend.
@@ -9,3 +10,5 @@ type Backend interface {
 	// Setup sets up the backend
 	Setup() error
 }
+
+type BackendFactory func(backendType string) Backend

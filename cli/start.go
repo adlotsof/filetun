@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"bufio"
 	"net"
 
 	"github.com/adlotsof/filetun/config"
@@ -9,13 +8,11 @@ import (
 	"github.com/vishvananda/netlink"
 
 	"github.com/adlotsof/filetun/types"
-	"io"
+	"github.com/adlotsof/filetun/backends"
 	"log"
 	"errors"
 	"fmt"
-	"os"
 	"sync"
-	"time"
 )
 
 func setupDevice(ifName string, ifCidr string, peersSubnet string) (*water.Interface, error) {
@@ -88,61 +85,11 @@ func teardownDevice(ifName string, ifCidr string) {
 	log.Printf("%s teardown complete", ifName)
 }
 
-func forwardPacketsToFile(iface types.Iface) {
-	file, err := os.OpenFile(config.CLI.Output, os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatalf("Failed to create outgoing packet file: %v", err)
-	}
-	defer file.Close()
-	for {
-		buffer := make([]byte, 1600)
-
-		n, err := iface.Read(buffer)
-		if err != nil {
-			if err != io.EOF {
-				log.Printf("Read error: %v", err)
-				break
-			}
-		}
-		if n > 0 {
-			if _, err := file.Write(buffer[:n]); err != nil {
-				log.Printf("Encode error listen: %v", err)
-			}
-		}
-		time.Sleep(50 * time.Millisecond)
-	}
-}
-
-func forwardsPacketsToIface(iface types.Iface) {
-	file, err := os.Open(config.CLI.Input)
-	if err != nil {
-		log.Fatalf("Failed to open outgoing packet file: %v", err)
-	}
-	defer file.Close()
-	reader := bufio.NewReader(file)
-	packetData := make([]byte, 16000)
-	for {
-		n, err := reader.Read(packetData)
-		if err == io.EOF || err == io.ErrUnexpectedEOF {
-			time.Sleep(50 * time.Millisecond)
-			continue
-		}
-		if err != nil {
-			log.Printf("Decode error deserialize: %v", err)
-		}
-		if n > 0 {
-			_, err = iface.Write(packetData[:n])
-			if err != nil {
-				log.Printf("Write error: %v", err)
-				break
-			}
-		}
-	}
-}
-
-func handleClientConnection(iface types.Iface) {
-	go forwardPacketsToFile(iface)
-	go forwardsPacketsToIface(iface)
+func handleClientConnection(iface types.Iface, backend types.Backend) {
+	// go forwardPacketsToFile(iface)
+	go backend.SendToBackend(iface)
+    go backend.ReceiveFromBackend(iface)
+	// go forwardsPacketsToIface(iface)
 }
 
 func Run() {
@@ -157,8 +104,9 @@ func Run() {
 	if err != nil {
 		log.Fatalf("coundt setup device, %v", err)
 	}
+	backend := backends.BackendFactory(conf.BackendType)
 
 	wg.Add(1)
-	go handleClientConnection(iface)
+	go handleClientConnection(iface, backend)
 	wg.Wait()
 }

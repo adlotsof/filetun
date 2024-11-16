@@ -22,14 +22,15 @@ You can use e.g. sshfs or ntfs or probably s3 or a gcp bucket
 
 On the left machine:
 ```bash
-mkdir testing
+mkdir testing; touch ./testing/input.gob ; touch ./testing/output.gob
 sudo ./main --own_cidr 10.0.9.0/24 --own_name left --input ./testing/input.gob --output ./testing/output.gob --peer_cidr='10.0.8.0/24'
 ```
 
 On the right machine:
 ```bash
 mkdir testing
-sudo ./main --own_cidr 10.0.8.0/24 --own_name right --input ./testing/input.gob --output ./testing/output.gob --peer_cidr='10.0.9.0/24'
+sshfs remote:/home/ubuntu/testing ./testing -o allow_other -o allow_root
+sudo ./main --own_cidr 10.0.8.0/24 --own_name right --input ./testing/output.gob --output ./testing/input.gob --peer_cidr='10.0.9.0/24'
 ```
 
 On both machines you should have a tun device, named `left` or `right` depending on the machine.
@@ -37,6 +38,7 @@ On both machines you should have a tun device, named `left` or `right` depending
 <!-- TODO: -->
 You could now e.g. spawn a webserver on the right machine and have it listen to :8080 with something like
 ```bash
+mkdir httpserve ; cd httpserve
 echo "it works" > index.html
 python3 -m http.server 8080 --bind 10.0.8.1
 ```
@@ -45,11 +47,12 @@ and from the left machine, you should be abled to
 curl 10.0.8.1:8080
 ```
 You should see "it works" output as result of your curl command.
+As of now, this is super slow.
 ```bash
 tail -f testing/input.gob testing/output.gob
 ```
 You should see some content in both input.gob and output.gob
-You should also be abled to ping or ssh anything on the remote subnet
+You should also (maybe) be abled to ping or ssh anything on the remote subnet
 
 
 

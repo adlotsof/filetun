@@ -140,7 +140,7 @@ func forwardsPacketsToIface(iface types.Iface) {
 	}
 }
 
-func handleClientConnection(iface types.Iface) {
+func handleClientConnection(iface types.Iface, backend types.Backend) {
 	go forwardPacketsToFile(iface)
 	go forwardsPacketsToIface(iface)
 }
@@ -157,8 +157,9 @@ func Run() {
 	if err != nil {
 		log.Fatalf("coundt setup device, %v", err)
 	}
+	backend := types,BackendFactory(conf.BackendType)
 
 	wg.Add(1)
-	go handleClientConnection(iface)
+	go handleClientConnection(iface, backend)
 	wg.Wait()
 }
